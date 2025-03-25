@@ -63,10 +63,39 @@ void Number::Print() {
     printf("%s\n", this->value);
 }
 
-void Number::SwitchBase(int newBase) {
+/*void Number::SwitchBase(int newBase) {
     this->base = newBase;
-    
-}//todo trebuie refacut value
+
+}//todo trebuie refacut value*/
+
+////
+void Number::SwitchBase(int newBase) {
+    int intVal = strtol(value, nullptr, base);
+    const char* digits = "0123456789ABCDEF";
+    char newValue[100];
+    int pos = 0;
+    bool negative = (intVal < 0);
+    if (negative)
+        intVal = -intVal;
+    do {
+        int remainder = intVal % newBase;
+        newValue[pos++] = digits[remainder];
+        intVal /= newBase;
+    } while (intVal > 0);
+    if (negative)
+        newValue[pos++] = '-';
+    newValue[pos] = '\0';
+    for (int i = 0; i < pos / 2; i++) {
+        char temp = newValue[i];
+        newValue[i] = newValue[pos - 1 - i];
+        newValue[pos - 1 - i] = temp;
+    }
+    delete[] value;
+    value = new char[pos + 1];
+    strcpy(value, newValue);
+    base = newBase;
+}
+////
 
 int Number::GetDigitsCount() {
     return strlen(this->value);
@@ -76,14 +105,27 @@ int Number::GetBase() {
     return this->base;
 }
 
+/*Number operator+(Number const &n1, Number const &n2) {
+    int largerBase = (n1.base >= n2.base ? n1.base : n2.base);
+    int result = atoi(n1.value) + atoi(n2.value);//todo duc amandoua in baza 10 si trebuie sa am 2 inturi pe care le adun si trec rez in baza noua
+    char sumValue[20];
+    sprintf(sumValue, "%d", result);
+    Number sum(sumValue, largerBase);
+    return sum;
+}*/
+
+/////
 Number operator+(Number const &n1, Number const &n2) {
     int largerBase = (n1.base >= n2.base ? n1.base : n2.base);
-    int result = atoi(n1.value) + atoi(n2.value); //todo duc amandoua in baza 10 si trebuie sa am 2 inturi pe care le adun si trec rez in baza noua
+    int a = atoi(n1.value);
+    int b = atoi(n2.value);
+    int result = a + b;
     char sumValue[20];
     sprintf(sumValue, "%d", result);
     Number sum(sumValue, largerBase);
     return sum;
 }
+////
 
 Number operator-(Number const &n1, Number const &n2) {
     int largerBase = (n1.base >= n2.base ? n1.base : n2.base);
